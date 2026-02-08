@@ -10,20 +10,20 @@ description: "与优秀的朋友们一起成长"
 申请友链前请先在自己网站添加本站友链，请使用以下信息：
 
 ```yaml
-站点名称: 夏夜流萤
-站点描述: 飞萤之火自无梦的长夜亮起，绽放在终竟的明天。
-站点链接: https://blog.cuteleaf.cn
+站点名称: Shai
+站点描述: 生活，摄影，工作
+站点链接: https://shaio.top
 头像链接: https://q1.qlogo.cn/g?b=qq&nk=7618557&s=640
 
 ```
 
 ## ✉️申请友链
 
-请将您的网站信息发送邮件至：`xxx@xxx.com`
+请将您的网站信息提交至Github issue：`https://github.com/ushaio/Firefly`
 
-**邮件标题**：`友链申请 - [您的站点名称]`
+**issue标题**：`友链申请 - [您的站点名称]`
 
-**邮件内容模板**：
+**issue内容模板**：
 
 ```
 站点信息：

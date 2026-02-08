@@ -2,7 +2,7 @@
 title: 解决ClashParty等虚拟网卡失效问题
 published: 2026-02-08
 description: 解决ClashParty等虚拟网卡失效问题
-image: ./../images/firefly3.webp
+image: "api"
 tags: [代理]
 category: 记录
 draft: false

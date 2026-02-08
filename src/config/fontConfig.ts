@@ -4,8 +4,8 @@ export const fontConfig = {
 	enable: true,
 	// 是否预加载字体文件
 	preload: true,
-	// 当前选择的字体，支持多个字体组合
-	selected: ["system"],
+	// 当前选择的字体，支持多个字体组合 system
+	selected: ["zen-maru-gothic"],
 
 	// 字体列表
 	fonts: {

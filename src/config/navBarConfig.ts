@@ -27,17 +27,23 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			{
+				name: "Mo Gallery",
+				url: "https://mo-gallery.shaio.top",
+				external: true,
+				icon: "material-symbols:camera-outline-rounded",
+			},
+			{
 				name: "GitHub",
-				url: "https://github.com/CuteLeaf/Firefly",
+				url: "https://github.com/ushaio",
 				external: true,
 				icon: "fa7-brands:github",
 			},
-			{
-				name: "Bilibili",
-				url: "https://space.bilibili.com/38932988",
-				external: true,
-				icon: "fa7-brands:bilibili",
-			},
+			// {
+			// 	name: "Bilibili",
+			// 	url: "https://space.bilibili.com/38932988",
+			// 	external: true,
+			// 	icon: "fa7-brands:bilibili",
+			// },
 		],
 	});
 
