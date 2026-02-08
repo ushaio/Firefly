@@ -1,5 +1,5 @@
 ---
-title: Flclash开启虚拟网卡，在wsl中不生效
+title: 解决ClashParty等虚拟网卡失效问题
 published: 2026-02-08
 description: Flclash开启虚拟网卡，在wsl中不生效而无法访问Google的其他解决方案
 image: ./images/firefly1.webp
@@ -7,6 +7,8 @@ tags: [代理]
 category: 记录
 draft: false
 ---
+
+
 
 
 
@@ -29,11 +31,11 @@ dnsTunneling=false
 
 Flclash配置
 
-![image](./../../images/Wsl对Flclash的tun模式无效问题/2dd1861763808abbca81f30df7802f546072177b_2_302x500.png)
+![image](./../images/Wsl对Flclash的tun模式无效问题/2dd1861763808abbca81f30df7802f546072177b_2_302x500.png)
 
 其他测试：
 
-![image](./../../images/Wsl对Flclash的tun模式无效问题/83a2d6813ca4f6244a5b8ce2d1c6c32f3654a9e1_2_690x306.png)
+![image](./../images/Wsl对Flclash的tun模式无效问题/83a2d6813ca4f6244a5b8ce2d1c6c32f3654a9e1_2_690x306.png)
 
 
 
@@ -45,11 +47,11 @@ Flclash配置
 
 
 
-**一些参考性的回答：**
+**参考：**
 
-![image-20260208094303378](./../../images/Wsl对Flclash的tun模式无效问题/image-20260208094303378.png)
+![image-20260208094303378](./../images/Wsl对Flclash的tun模式无效问题/image-20260208094303378.png)
 
-![image-20260208094310254](./../../images/Wsl对Flclash的tun模式无效问题/image-20260208094310254.png)
+![image-20260208094310254](./../images/Wsl对Flclash的tun模式无效问题/image-20260208094310254.png)
 
 
 
