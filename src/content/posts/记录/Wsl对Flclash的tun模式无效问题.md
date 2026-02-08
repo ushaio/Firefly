@@ -8,7 +8,7 @@ category: 记录
 draft: false
 ---
 
----
+
 
 使用Flclash开启虚拟网卡，想wsl也使用Windows的代理的，但是发现不生效，生效的前提是开启系统代理，但这样就有违该设置了。
 
