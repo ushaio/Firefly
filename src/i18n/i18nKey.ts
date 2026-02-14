@@ -39,6 +39,26 @@ enum I18nKey {
 	postCount = "postCount",
 	postsCount = "postsCount",
 
+	// Music Widget
+	musicNoPlaying = "musicNoPlaying",
+	musicLyrics = "musicLyrics",
+	musicVolume = "musicVolume",
+	musicPlayMode = "musicPlayMode",
+	musicPrev = "musicPrev",
+	musicNext = "musicNext",
+	musicPlaylist = "musicPlaylist",
+	musicNoLyrics = "musicNoLyrics",
+	musicLoadingLyrics = "musicLoadingLyrics",
+	musicFailedLyrics = "musicFailedLyrics",
+	musicNoSongs = "musicNoSongs",
+	musicError = "musicError",
+	musicPlay = "musicPlay",
+	musicPause = "musicPause",
+	musicProgress = "musicProgress",
+	musicCover = "musicCover",
+	musicNoCover = "musicNoCover",
+	musicAudioPlayer = "musicAudioPlayer",
+
 	themeColor = "themeColor",
 
 	lightMode = "lightMode",
@@ -173,6 +193,11 @@ enum I18nKey {
 	wallpaperBannerMode = "wallpaperBannerMode",
 	wallpaperOverlayMode = "wallpaperOverlayMode",
 	wallpaperNoneMode = "wallpaperNoneMode",
+
+	// 横幅设置
+	bannerSettings = "bannerSettings",
+	bannerTitle = "bannerTitle",
+	wavesAnimation = "wavesAnimation",
 
 	// 文章布局
 	postListLayout = "postListLayout",

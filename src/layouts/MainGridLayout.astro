@@ -1,6 +1,6 @@
 ---
 import Live2DWidget from "@components/features/Live2DWidget.astro";
-import OverlayWallpaper from "@components/features/OverlayWallpaper.astro";
+
 import SpineModel from "@components/features/SpineModel.astro";
 import Footer from "@components/layout/Footer.astro";
 import Navbar from "@components/layout/Navbar.astro";
@@ -21,6 +21,7 @@ import {
 	BANNER_HEIGHT_EXTEND,
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "@/constants/constants";
+import { getImageQuality } from "@/utils/image-utils";
 import { getBackgroundImages, isHomePage } from "@/utils/layout-utils";
 import {
 	generateGridClasses,
@@ -31,6 +32,9 @@ import {
 	type ResponsiveSidebarConfig,
 } from "@/utils/responsive-utils";
 import Layout from "./Layout.astro";
+
+import "@/styles/markdown.css";
+import "@/styles/expressive-code.css";
 
 interface Props {
 	title?: string;
@@ -60,13 +64,17 @@ const isOverlayMode = backgroundWallpaper.mode === "overlay";
 const isBackgroundEnabled = backgroundWallpaper.mode !== "none";
 const isWallpaperSwitchable = backgroundWallpaper.switchable ?? true;
 
-// 检查是否启用波浪动画效果
+// 检查是否启用水波纹动画效果
 const wavesConfig = backgroundWallpaper.banner?.waves?.enable;
-// 处理分设备控制的波浪动画
+const wavesSwitchable = backgroundWallpaper.banner?.waves?.switchable ?? false;
+// 处理分设备控制的水波纹动画
 const wavesEnabledOnDesktop =
 	typeof wavesConfig === "object" ? wavesConfig.desktop : wavesConfig;
 const wavesEnabledOnMobile =
 	typeof wavesConfig === "object" ? wavesConfig.mobile : wavesConfig;
+// 是否需要渲染水波纹元素（任一设备启用 或 允许用户切换）
+const shouldRenderWaves =
+	wavesEnabledOnDesktop || wavesEnabledOnMobile || wavesSwitchable;
 
 // 处理分设备控制的横幅信贷显示
 const creditEnableConfig = backgroundWallpaper.banner?.credit?.enable;
@@ -167,6 +175,35 @@ const rightSidebarClass = effectiveIsBothSidebars
 	: "";
 const mainContentClass = generateMainContentClasses(updatedGridConfig);
 
+const footerClass = [
+	"footer",
+	"col-span-1",
+	"md:col-span-2",
+	"onload-animation",
+];
+
+if (
+	updatedGridConfig.isBothSidebars &&
+	updatedGridConfig.hasLeftComponents &&
+	updatedGridConfig.hasRightComponents
+) {
+	footerClass.push("xl:col-start-2 xl:col-span-1");
+} else if (
+	updatedGridConfig.hasLeftComponents &&
+	!updatedGridConfig.hasRightComponents
+) {
+	footerClass.push("xl:col-start-2 xl:col-span-1");
+} else if (
+	!updatedGridConfig.hasLeftComponents &&
+	updatedGridConfig.hasRightComponents
+) {
+	footerClass.push("xl:col-start-1 xl:col-span-1");
+} else {
+	footerClass.push("xl:col-start-1 xl:col-span-1");
+}
+
+const footerClassName = footerClass.join(" ");
+
 // 检查是否应该启用半透明效果
 const shouldEnableTransparency = isOverlayMode && isBackgroundEnabled;
 
@@ -176,24 +213,14 @@ const transparentClass = shouldEnableTransparency
 	: "";
 
 const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
+
+// 获取图片质量配置
+const configQuality = getImageQuality();
+const mobileQuality = Math.round(configQuality * 0.9);
 ---
 
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle} postSlug={postSlug}>
 
-
-<!-- 全屏透明覆盖壁纸 - 如果允许切换则始终渲染，否则只渲染当前模式 -->
-{(isWallpaperSwitchable || isOverlayMode) && (
-	<OverlayWallpaper config={{
-		src: {
-			desktop: typeof backgroundImages.desktop === 'string' ? backgroundImages.desktop : '',
-			mobile: typeof backgroundImages.mobile === 'string' ? backgroundImages.mobile : ''
-		},
-		zIndex: backgroundWallpaper.overlay?.zIndex,
-		opacity: backgroundWallpaper.overlay?.opacity,
-		blur: backgroundWallpaper.overlay?.blur,
-	}} 
-	className={isWallpaperSwitchable && !isOverlayMode ? "hidden opacity-0" : undefined} />
-)}
 
 <!-- 为全屏壁纸模式添加body类 -->
 {shouldEnableTransparency && (
@@ -210,27 +237,106 @@ const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
     </div>
 </div>
 
-<!-- Banner - 如果允许切换则始终渲染，否则只渲染当前模式 -->
-{(isWallpaperSwitchable || isBannerMode) && (
-<div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden ${mobileNonHomeBannerClass}`} style={isWallpaperSwitchable ? `top: -${BANNER_HEIGHT_EXTEND}vh; display: none;` : `top: -${BANNER_HEIGHT_EXTEND}vh`}>
+<!-- Wallpaper - 如果允许切换则始终渲染，否则只渲染当前模式 -->
+{(isWallpaperSwitchable || isBannerMode || isOverlayMode) && (
+<div id="wallpaper-wrapper" class:list={[
+	`absolute z-10 w-full transition duration-700 overflow-hidden ${mobileNonHomeBannerClass}`,
+	(isOverlayMode && !isWallpaperSwitchable) || (isWallpaperSwitchable && !isBannerMode) ? 'wallpaper-overlay' : ''
+]} style={
+	isWallpaperSwitchable
+		? `top: -${BANNER_HEIGHT_EXTEND}vh; display: none; --overlay-opacity: ${backgroundWallpaper.overlay?.opacity ?? 0.8}; --overlay-z-index: ${backgroundWallpaper.overlay?.zIndex ?? -1}; --overlay-blur: ${backgroundWallpaper.overlay?.blur ?? 0}px;`
+		: isOverlayMode
+			? `--overlay-opacity: ${backgroundWallpaper.overlay?.opacity ?? 0.8}; --overlay-z-index: ${backgroundWallpaper.overlay?.zIndex ?? -1}; --overlay-blur: ${backgroundWallpaper.overlay?.blur ?? 0}px;`
+			: `top: -${BANNER_HEIGHT_EXTEND}vh`
+}>
     <!-- 背景图片显示 -->
-    <div class="relative h-full w-full">
-        <!-- Mobile: use mobile-specific image -->
-        <ImageWrapper 
-            alt="Mobile background image of the blog" 
-            class:list={["block lg:hidden object-cover h-full w-full transition duration-700 opacity-100"]}
-            src={typeof backgroundImages.mobile === 'string' ? backgroundImages.mobile : (typeof backgroundImages.desktop === 'string' ? backgroundImages.desktop : '')} 
-            position={backgroundWallpaper.banner?.position}
-        />
-        <!-- Desktop: use desktop-specific image -->
-        <ImageWrapper 
-            id="banner" 
-            alt="Desktop background image of the blog" 
-            class:list={["hidden lg:block object-cover h-full transition duration-700 opacity-100"]}
-            src={typeof backgroundImages.desktop === 'string' ? backgroundImages.desktop : (typeof backgroundImages.mobile === 'string' ? backgroundImages.mobile : '')} 
-            position={backgroundWallpaper.banner?.position}
-        />
+    <div class="relative h-full w-full" id="banner-images-container" data-mobile-count={backgroundImages.mobile.length} data-desktop-count={backgroundImages.desktop.length}>
+        <!-- Mobile: 渲染所有移动端图片 -->
+        {backgroundImages.mobile.map((src, index) => (
+            <div class={`banner-image-mobile absolute inset-0 ${index === 0 ? "block lg:hidden" : "hidden"}`}>
+                <ImageWrapper
+                    alt="Mobile background image of the blog"
+                    class="object-cover h-full w-full"
+                    src={src}
+                    position={backgroundWallpaper.banner?.position}
+                    widths={[640, 750, 1080]}
+                    sizes="100vw"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : "low"}
+                    quality={mobileQuality}
+                />
+            </div>
+        ))}
+        <!-- Desktop: 渲染所有桌面端图片 -->
+        {backgroundImages.desktop.map((src, index) => (
+            <div class={`banner-image-desktop absolute inset-0 ${index === 0 ? "hidden lg:block" : "hidden"}`}>
+                <ImageWrapper
+                    id={index === 0 ? "banner" : undefined}
+                    alt="Desktop background image of the blog"
+                    class="object-cover h-full"
+                    src={src}
+                    position={backgroundWallpaper.banner?.position}
+                    widths={[1280, 1920, 2560]}
+                    sizes="100vw"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchpriority={index === 0 ? "high" : "low"}
+                    quality={configQuality}
+                />
+            </div>
+        ))}
     </div>
+
+    <!-- 客户端随机选择图片脚本 -->
+    <script is:inline>
+        (function randomizeBannerImage() {
+            function selectRandomImage() {
+                const container = document.getElementById('banner-images-container');
+                if (!container) return;
+
+                const mobileCount = parseInt(container.dataset.mobileCount || '0', 10);
+                const desktopCount = parseInt(container.dataset.desktopCount || '0', 10);
+                const isMobile = window.innerWidth < 1024;
+
+                // 检查是否已经选择过（F5刷新会重置全局变量，Swup切换不会）
+                if (typeof window.__bannerRandomIndex === 'undefined') {
+                    window.__bannerRandomIndex = {
+                        mobile: mobileCount > 1 ? Math.floor(Math.random() * mobileCount) : 0,
+                        desktop: desktopCount > 1 ? Math.floor(Math.random() * desktopCount) : 0
+                    };
+                }
+
+                const randomMobileIndex = window.__bannerRandomIndex.mobile;
+                const randomDesktopIndex = window.__bannerRandomIndex.desktop;
+
+                // 应用移动端图片选择
+                if (mobileCount > 0) {
+                    const mobileImages = container.querySelectorAll('.banner-image-mobile');
+                    mobileImages.forEach((img, i) => {
+                        if (i === randomMobileIndex) {
+                            img.style.display = isMobile ? 'block' : 'none';
+                        } else {
+                            img.style.display = 'none';
+                        }
+                    });
+                }
+
+                // 应用桌面端图片选择
+                if (desktopCount > 0) {
+                    const desktopImages = container.querySelectorAll('.banner-image-desktop');
+                    desktopImages.forEach((img, i) => {
+                        if (i === randomDesktopIndex) {
+                            img.style.display = isMobile ? 'none' : 'block';
+                        } else {
+                            img.style.display = 'none';
+                        }
+                    });
+                }
+            }
+
+            // 立即执行
+            selectRandomImage();
+        })();
+    </script>
     
     <!-- Home page text overlay - 始终渲染以便切换模式时控制显示 -->
     {(isWallpaperSwitchable || showHomeText) && homeTextEnable && (
@@ -290,11 +396,11 @@ const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
         setRandomSubtitle();
     </script>
     
-    <!-- Water waves effect - 始终渲染以便动态切换 -->
-    {(wavesEnabledOnDesktop || wavesEnabledOnMobile) ? (
-    <div class={`waves absolute -bottom-px h-[10vh] max-h-37.5 min-h-12.5 w-full md:h-[15vh] 
-        ${!wavesEnabledOnMobile ? 'hidden' : ''} ${!wavesEnabledOnDesktop ? 'md:hidden' : ''} ${wavesEnabledOnDesktop ? 'md:block' : ''}`} 
-        id="header-waves" 
+    <!-- Water waves effect - 如果允许切换或任一设备启用则渲染 -->
+    {shouldRenderWaves ? (
+    <div class={`waves absolute -bottom-px h-[10vh] max-h-37.5 min-h-12.5 w-full md:h-[15vh]
+        ${!wavesEnabledOnMobile ? 'hidden' : ''} ${!wavesEnabledOnDesktop ? 'md:hidden' : ''} ${wavesEnabledOnDesktop ? 'md:block' : ''}`}
+        id="header-waves"
         style="transform: translateZ(0); will-change: fill;">
         <svg
             class="waves"
@@ -414,9 +520,7 @@ const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
                 )}
                 <div id="content-wrapper" class="onload-animation transition-leaving">
                     <slot></slot>
-                    <div class="footer col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 onload-animation hidden lg:block">
-                        <Footer></Footer>
-                    </div>
+
                 </div>
             </main>
             
@@ -451,7 +555,7 @@ const navbarWidthFull = siteConfig.navbar.widthFull ?? false;
                 </div>
             )}
 
-            <div class="footer col-span-1 md:col-span-2 lg:col-span-2 onload-animation block lg:hidden">
+            <div class={footerClassName}>
                 <Footer></Footer>
             </div>
         </div>
